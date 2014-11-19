@@ -7,11 +7,11 @@ Stable tag: 1.0.2
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Evergage helps you engage and communicate with your users in real-time and in your application. 
+Evergage helps you engage and communicate with your users in real-time and in your site.
 
 == Description ==
 
-Evergage helps you engage and communicate with your users in real-time and in your application. Segment your users by behavior and demographics and help them succeed through messaging and guidance. Track the performance of your in-app campaigns and deliver better value Today without redevelopment and waiting for deployments.
+Evergage helps you engage and communicate with your visitors in real-time and in your site. Segment your users by content viewed, track the performance of your personalization campaigns and deliver targeted content recommendations.
 
 
 == Installation ==
