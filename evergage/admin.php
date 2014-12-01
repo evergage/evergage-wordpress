@@ -131,18 +131,18 @@ function evergage_config() {
 
       <p><strong>Integration Synchronicity</strong><br/>
         <input type="radio" name="evergage_synchronous" name="Synchronous"
-               value="yes" <?php echo checked(1, get_option('evergage_synchronous') == yes, true) ?> > Synchronous<br/>
+               value="yes" <?php echo checked(1, get_option('evergage_synchronous') == 'yes', true) ?> > Synchronous<br/>
         <input type="radio" name="evergage_synchronous" name="Asynchronous"
-               value="no"  <?php echo checked(1, get_option('evergage_synchronous') == no, false) ?> > Asynchronous<br/>
+               value="no"  <?php echo checked(1, get_option('evergage_synchronous') == 'no', false) ?> > Asynchronous<br/>
 
       </p>
 
 
       <p><strong>Evergage Promote</strong><br/>
         <input type="radio" name="evergage_promote" name="Enabled"
-               value="yes" <?php echo checked(1, get_option('evergage_promote') == yes, true) ?> > Enabled<br/>
+               value="yes" <?php echo checked(1, get_option('evergage_promote') == 'yes', true) ?> > Enabled<br/>
         <input type="radio" name="evergage_promote" name="Disabled"
-               value="no"  <?php echo checked(1, get_option('evergage_promote') == no, false) ?> > Disabled<br/>
+               value="no"  <?php echo checked(1, get_option('evergage_promote') == 'no', false) ?> > Disabled<br/>
       </p>
 
 
