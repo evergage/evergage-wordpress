@@ -73,16 +73,16 @@ function evergage_add_promote_js() {
     $tags = array();
 
     foreach ($wptags as $wptag) {
-      $tag = array(type => 't', tagType => 'Keyword', _id => $wptag->name, name => $wptag->name);
+      $tag = array('type' => 't', 'tagType' => 'Keyword', '_id' => $wptag->name, 'name' => $wptag->name);
 
       $tags[] = $tag;
     }
 
-    $tag = array(type => 't', tagType => 'Author', _id => get_the_author_meta('user_login', $authorId), name => get_the_author_meta('display_name', $authorId), url => get_the_author_meta('user_url', $authorId));
+    $tag = array('type' => 't', 'tagType' => 'Author', '_id' => get_the_author_meta('user_login', $authorId), 'name' => get_the_author_meta('display_name', $authorId), 'url' => get_the_author_meta('user_url', $authorId));
     $tags[] = $tag;
 
 
-    $item = array(_id => $post_id, type => $type, name => $title, url => $url, description => $description, tags => $tags);
+    $item = array('_id' => $post_id, 'type' => $type, 'name' => $title, 'url' => $url, 'description' => $description, 'tags' => $tags);
 
     $jsonItem = json_encode($item, JSON_UNESCAPED_SLASHES);
 
@@ -122,14 +122,17 @@ function evergage_send_http_event($action, $params) {
 
   $defaultSettings = evergage_defaultparameters($current_user);
 
-  $url .= "&userId=" . urlencode($defaultSettings['settings']['setUser']);
-
-  foreach ($defaultSettings['customVariables'] as $key => $value) {
-    if (!empty($value)) {
-      $url .= "&" . urlencode($key) . "=" . urlencode($value);
-    }
+  if (!empty($defaultSettings) && !empty($defaultSettings['settings']) && !empty($defaultSettings['settings']['setUser'])) {
+    $url .= "&userId=" . urlencode($defaultSettings['settings']['setUser']);
   }
 
+  if (!empty($defaultSettings) && !empty($defaultSettings['customVariables']) ) {
+    foreach ($defaultSettings['customVariables'] as $key => $value) {
+      if (!empty($value)) {
+        $url .= "&" . urlencode($key) . "=" . urlencode($value);
+      }
+    }
+  }
 
   foreach ($params as $key => $value) {
     if (!empty($value)) {
@@ -238,6 +241,8 @@ function evergage_add_javascript() {
     $evergageHost = 'cdn.evergage.com';
     if ($evergageAccount == 'localtest') {
       $evergageHost = 'localtest.evergage.com' . (evergage_isSSL() ? ':8443' : ':8080');
+    } else if ($evergageAccount == "demo4" || $evergageAccount == "demo5" || $evergageAccount == "eng2") {
+      $evergageHost = $evergageAccount . '.evergage.com';
     }
 
     $evergageScriptURL = 'http' . (evergage_isSSL() ? 's' : '') . '://' . $evergageHost .
@@ -321,13 +326,16 @@ add_action('delete_user', 'evergage_user_delete');
  */
 function evergage_user_login($username) {
 
-  $userinfo = get_userdatabylogin($username);
+  $userinfo = get_user_by('login', $username);
+//    get_userdatabylogin($username);
 
-  evergage_add_action('User: Login', array(
-    'uid' => $userinfo->ID,
-    'userId' => $userinfo->user_login,
-    'mail' => $userinfo->user_email
-  ), $userinfo->ID);
+  if ($userinfo != false) {
+    evergage_add_action('User: Login', array(
+      'uid' => $userinfo->ID,
+      'userId' => $userinfo->user_login,
+      'mail' => $userinfo->user_email
+    ), $userinfo->ID);
+  }
 }
 
 add_action('wp_authenticate', 'evergage_user_login');
