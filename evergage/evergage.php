@@ -4,7 +4,7 @@
  * Plugin Script: evergage.php
  * Plugin URI: http://www.evergage.com
  * Description: Real-time web personalization
- * Version: 1.0.2
+ * Version: 1.0.3
  * Author: Evergage, Inc.
  * Author URI: http://www.evergage.com
  * License: GPLv2
@@ -84,7 +84,7 @@ function evergage_add_promote_js() {
 
     $item = array('_id' => $post_id, 'type' => $type, 'name' => $title, 'url' => $url, 'description' => $description, 'tags' => $tags);
 
-    $jsonItem = json_encode($item, JSON_UNESCAPED_SLASHES);
+    $jsonItem = json_encode($item, 64); //JSON_UNESCAPED_SLASHES
 
     echo "<script>var myItem = " . $jsonItem . ";</script>";
     echo "<script>console.log(JSON.stringify(" . $jsonItem . "));</script>";

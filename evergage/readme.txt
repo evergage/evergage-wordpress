@@ -3,7 +3,7 @@ Contributors: ghinkle
 Tags: analytics, statistics, tracking, stats, personalization
 Requires at least: 3.3
 Tested up to: 3.9.2
-Stable tag: 1.0.2
+Stable tag: 1.0.3
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
