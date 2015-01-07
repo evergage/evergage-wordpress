@@ -3,7 +3,7 @@ Contributors: ghinkle
 Tags: analytics, statistics, tracking, stats, personalization
 Requires at least: 3.3
 Tested up to: 3.9.2
-Stable tag: 1.0.3
+Stable tag: 1.0.4
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -23,6 +23,16 @@ This section describes how to install the plugin and get it working.
 1. Go to the options panel under the 'Settings' menu and add your Evergage account name and dataset name and set the settings you want.
 
 == Changelog ==
+
+= 1.0.4 =
+
+* Add support for tracking author, keyword and category pages
+* Add support for tracking categories on posts and pages
+
+
+= 1.0.3 =
+
+* PHP 5.3 compatibility
 
 = 1.0.2 =
 

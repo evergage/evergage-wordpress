@@ -4,7 +4,7 @@
  * Plugin Script: evergage.php
  * Plugin URI: http://www.evergage.com
  * Description: Real-time web personalization
- * Version: 1.0.3
+ * Version: 1.0.4
  * Author: Evergage, Inc.
  * Author URI: http://www.evergage.com
  * License: GPLv2
@@ -50,17 +50,16 @@ function evergage_add_action($action = NULL, array $params = array(), $uid = NUL
 }
 
 function evergage_add_promote_js() {
-  global $post;
-  $post_id = '';
-  if (!is_singular())
-    return;
-  if (empty($post_id)) {
-    $post_id = $post->ID;
-  }
 
   echo "<script>var _aaq = window._aaq || (window._aaq = []);</script>";
 
-  if (!empty($post_id)) {
+  if (is_singular()) {
+
+    global $post;
+    $post_id = '';
+    if (empty($post_id)) {
+      $post_id = $post->ID;
+    }
 
     $authorId = $post->post_author;
     $title = $post->post_title;
@@ -81,22 +80,68 @@ function evergage_add_promote_js() {
     $tag = array('type' => 't', 'tagType' => 'Author', '_id' => get_the_author_meta('user_login', $authorId), 'name' => get_the_author_meta('display_name', $authorId), 'url' => get_the_author_meta('user_url', $authorId));
     $tags[] = $tag;
 
+    $categories = array();
 
-    $item = array('_id' => $post_id, 'type' => $type, 'name' => $title, 'url' => $url, 'description' => $description, 'tags' => $tags);
+    $categoryObjects = get_the_category();
+    $separator = ' ';
+    $output = '';
+    if($categoryObjects) {
+      foreach ($categoryObjects as $categoryObject) {
+        $output .= '<a href="' . get_category_link($categoryObject->term_id) . '" title="' . esc_attr(sprintf(__("View all posts in %s"), $categoryObject->name)) . '">' . $categoryObject->cat_name . '</a>' . $separator;
+
+        $catId = substr(get_category_parents( $categoryObject->term_id , false, '|' ), 0, -1);
+
+        $cat = array('type' => 'c', '_id' => $catId, 'name' => $categoryObject->name, 'url' => get_category_link($categoryObject->term_id));
+        $categories []= $cat;
+      }
+    }
+
+
+
+    $item = array('_id' => $post_id, 'type' => $type, 'name' => $title, 'url' => $url, 'description' => $description, 'tags' => $tags, 'categories' => $categories);
 
     $jsonItem = json_encode($item, 64); //JSON_UNESCAPED_SLASHES
 
-    echo "<script>var myItem = " . $jsonItem . ";</script>";
-    echo "<script>console.log(JSON.stringify(" . $jsonItem . "));</script>";
-//    echo "<script>Evergage.viewItem(" . $jsonItem . ");</script>";
-    echo "<script>_aaq.push(['viewItem', " . $jsonItem . "]);</script>";
+    echo "<script>window.evergageItem = " . $jsonItem . ";\n_aaq.push(['viewItem', window.evergageItem]);</script>";
 
 
   }
 
+  if (is_category()) {
+    $categoryObject = get_category( get_query_var( 'cat' ) );
+
+    $catId = substr(get_category_parents( $categoryObject->term_id , false, '|' ), 0, -1);
+    $cat = array('type' => 'c', '_id' => $catId, 'name' => $categoryObject->name, 'url' => get_category_link($categoryObject->term_id));
+
+    $jsonItem = json_encode($cat, 64); //JSON_UNESCAPED_SLASHES
+    echo "<script>window.evergageItem = " . $jsonItem . ";\n_aaq.push(['viewCategory', window.evergageItem]);</script>";
+
+  }
+
+
+  if (is_author()) {
+    global $author;
+
+    $auth = array('type' => 't', 'tagType' => 'Author', '_id' => get_the_author_meta('user_login', $author), 'name' => get_the_author_meta('display_name', $author), 'url' => get_the_author_meta('user_url', $author));
+    $jsonItem = json_encode($auth, 64); //JSON_UNESCAPED_SLASHES
+    echo "<script>window.evergageItem = " . $jsonItem . ";\n_aaq.push(['viewTag', window.evergageItem]);</script>";
+
+  }
+
+  if (is_tag()) {
+    global $tag;
+
+    $tagId =  get_query_var('tag_id');
+    $tagObject = get_tag($tagId);
+
+    $tagItem = array('type' => 't', 'tagType' => 'Keyword', '_id' =>  $tagObject->name, 'name' => $tagObject->name, 'url' => get_tag_link($tagId));
+    $jsonItem = json_encode($tagItem, 64); //JSON_UNESCAPED_SLASHES
+    echo "<script>window.evergageItem = " . $jsonItem . ";\n_aaq.push(['viewTag', window.evergageItem ]);</script>";
+
+
+  }
 
 //  error_log('<!-- post ' . $post_id . ' -->');
-  echo('<!-- post ' . $post_id . ' -->');
 //  $ip = Helper::get_real_ip_addr();
 //  $this->statistic->add_view_count($post_id, date('Y-m-d'), $ip);
 }
